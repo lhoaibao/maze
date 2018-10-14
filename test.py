@@ -18,7 +18,7 @@ def getPositionOfA(maze):
     for line in maze:
         if "A" in line:
             x = line.index("A")
-            return [x,y]
+            return [y,x]
         else:
             y+=1
 
@@ -31,7 +31,7 @@ def bfs(grid, start):
       if grid[y][x] == 'o':
           path.remove(path[0])
           return path
-      if grid[y][x] == '!':
+      elif grid[y][x] == '!':
           path.remove(path[0])
           return path
       for x2, y2 in ((x+1,y), (x-1,y), (x,y+1), (x,y-1)):
@@ -40,13 +40,13 @@ def bfs(grid, start):
               seen.add((y2, x2))
 
 def move(A, go):
-    if go[0] - A[0] == 1:
+    if go[1] - A[1] == 1:
         return "MOVE RIGHT\n\n"
-    elif go[0] - A[0] == -1:
-        return "MOVE LEFT\n\n"
-    elif go[1] - A[1] == 1:
-        return "MOVE DOWN\n\n"
     elif go[1] - A[1] == -1:
+        return "MOVE LEFT\n\n"
+    elif go[0] - A[0] == 1:
+        return "MOVE DOWN\n\n"
+    elif go[0] - A[0] == -1:
         return "MOVE UP\n\n"
 
 
@@ -59,6 +59,6 @@ while line != "":
     if "MAZE" in line:
         nowMaze = getMaze()
         nowPosition = getPositionOfA(nowMaze)
-        move = bfs(nowMaze,(nowPosition[0],nowPosition[1]))
-        sys.stdout.write(move(nowPosition,move[0]))
+        move1 = bfs(nowMaze,(nowPosition[0],nowPosition[1]))
+        sys.stdout.write(move(nowPosition,move1[0]))
     line = sys.stdin.readline()
