@@ -2,6 +2,8 @@
 import sys
 import collections
 
+
+# funtion read maze every time it change
 def getMaze():
     maze = []
     sys.stdin.readline()
@@ -13,6 +15,7 @@ def getMaze():
     return maze
 
 
+# funtion read maze and return the position of A
 def getPositionOfA(maze):
     y = 0
     for line in maze:
@@ -23,6 +26,7 @@ def getPositionOfA(maze):
             y += 1
 
 
+# funtion get the shortest way and return a list move
 def bfs(grid, start):
     queue = collections.deque([[start]])
     seen = set([start])
@@ -41,6 +45,7 @@ def bfs(grid, start):
                 seen.add((y2, x2))
 
 
+# funtion return the command to move
 def move(A, go):
     if go[1] - A[1] == 1:
         return "MOVE RIGHT\n\n"
@@ -52,6 +57,7 @@ def move(A, go):
         return "MOVE UP\n\n"
 
 
+# run here
 line = sys.stdin.readline()
 while line != "":
     if "HELLO" in line:
