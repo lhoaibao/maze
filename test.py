@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import sys
-import math
+import collections
 
 # make a list to store maze
 maze = []
@@ -17,8 +17,6 @@ sys.stdin.readline()
 print("OK\n")
 sys.stdin.readline()
 
-
-#function get now board
 def getMaze():
     maze.clear()
     line = sys.stdin.readline()
@@ -29,10 +27,6 @@ def getMaze():
             maze.append(line)
             break
         maze.append(line)
-
-
-def distance(A,B):
-    return math.sqrt((B[0]-A[0])**2 + (B[1]-A[1])**2)
 
 
 def getPositionOfA():
@@ -46,62 +40,30 @@ def getPositionOfA():
         else:
             y+=1
 
-def getPositionOfCoin():
-    y = 0
-    CoinPosition.clear()
-    for line in maze:
-        if "o" in line:
-            for x in range(len(line)):
-                if(line[x] == "o"):
-                    CoinPosition.append([x,y])
-        else:
-            y+=1
-    y = 0
-    SpecialCoinPosition.clear()
-    for line in maze:
-        if "!" in line:
-            for x in range(len(line)):
-                if(line[x] == "!"):
-                    CoinPosition.append([x,y])
-        else:
-            y+=1
-
-
-def shortestMove():
-    if(len(SpecialCoinPosition)!=0):
-        min = distance(SpecialCoinPosition[0], APosition)
-        for item in SpecialCoinPosition:
-            if distance(item,APosition) <= min:
-                target.clear()
-                target.extend(item)
-                min = distance(item,APosition)
-        return min
-    else:
-        min = distance(CoinPosition[0], APosition)
-        for item in CoinPosition:
-            if distance(item,APosition) <= min:
-                target.clear()
-                target.extend(item)
-                min = distance(item,APosition)
-        return min
-
+def bfs(grid, start):
+  queue = collections.deque([[start]])
+  seen = set([start])
+  while queue:
+      path = queue.popleft()
+      y, x = path[-1]
+      if grid[y][x] == 'o':
+          return path
+      for x2, y2 in ((x+1,y), (x-1,y), (x,y+1), (x,y-1)):
+          if 0 <= x2 < len(maze[0]) and 0 <= y2 < len(maze) and grid[y2][x2] != '#' and (y2, x2) not in seen:
+              queue.append(path + [[y2, x2]])
+              seen.add((y2, x2))
 def move():
     getMaze()
     getPositionOfA()
-    getPositionOfCoin()
-    minWay = shortestMove()
-    if maze[APosition[0]][APosition[1]-1] != "#":
-        if distance([APosition[0],APosition[1]-1],target)<minWay:
-            print("MOVE UP\n")
-    if maze[APosition[0]][APosition[1]+1] != "#":
-        if distance([APosition[0],APosition[1]-1],target)<minWay:
-            print("MOVE DOWN\n")
-    if maze[APosition[0]-1][APosition[1]] != "#":
-        if distance([APosition[0],APosition[1]-1],target)<minWay:
-            print("MOVE LEFT\n")
-    if maze[APosition[0]+1][APosition[1]] != "#":
-        if distance([APosition[0],APosition[1]-1],target)<minWay:
-            print("MOVE RIGHT\n")
-while True:
-    move()
-    line = sys.stdin.readline()
+    move = bfs(maze,APosition)
+    if move[1] == APosition[1] +1:
+        print("MOVE DOWN\n")
+    if move[1] == APosition[1] -1:
+        print("MOVE UP\n")
+    if move[0] == APosition[0] +1:
+        print("MOVE RIGHT\n")
+    if move[0] == APosition[0] -1:
+        print("MOVE LEFT\n")
+
+
+move()
