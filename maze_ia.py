@@ -21,7 +21,7 @@ def getPositionOfA(maze):
     for line in maze:
         if "A" in line:
             x = line.index("A")
-            return [y, x]
+            return [x, y]
         else:
             y += 1
 
@@ -32,41 +32,41 @@ def bfs(grid, start):
     seen = set([start])
     while queue:
         path = queue.popleft()
-        y, x = path[-1]
+        x, y = path[-1]
         if grid[y][x] == 'o':
             path.remove(path[0])
-            return path
+            return path[0]
         elif grid[y][x] == '!':
             path.remove(path[0])
-            return path
+            return path[0]
         for x2, y2 in ((x+1, y), (x-1, y), (x, y+1), (x, y-1)):
-            if grid[y2][x2] != '#' and (y2, x2) not in seen:
-                queue.append(path + [[y2, x2]])
-                seen.add((y2, x2))
+            if grid[y2][x2] != '#' and (x2, y2) not in seen:
+                queue.append(path + [[x2, y2]])
+                seen.add((x2, y2))
 
 
 # funtion return the command to move
 def move(A, go):
     if go[1] - A[1] == 1:
-        return "MOVE RIGHT\n\n"
+        return "MOVE DOWN\n"
     elif go[1] - A[1] == -1:
-        return "MOVE LEFT\n\n"
+        return "MOVE UP\n"
     elif go[0] - A[0] == 1:
-        return "MOVE DOWN\n\n"
+        return "MOVE RIGHT\n"
     elif go[0] - A[0] == -1:
-        return "MOVE UP\n\n"
+        return "MOVE LEFT\n"
 
 
 # run here
 line = sys.stdin.readline()
 while line != "":
     if "HELLO" in line:
-        sys.stdout.write("I AM BAO\n\n")
+        print("I AM BAO\n")
     if "YOU ARE A" in line:
-        sys.stdout.write("OK\n\n")
+        print("OK\n")
     if "MAZE" in line:
         nowMaze = getMaze()
         nowPosition = getPositionOfA(nowMaze)
         move1 = bfs(nowMaze, (nowPosition[0], nowPosition[1]))
-        sys.stdout.write(move(nowPosition, move1[0]))
+        print(move(nowPosition, move1))
     line = sys.stdin.readline()
