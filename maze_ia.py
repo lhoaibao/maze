@@ -3,6 +3,7 @@ import sys
 import collections
 alp = 'ASDFGHJKLQWERTYUIOPZXCVBNM'
 
+
 # funtion read maze every time it change
 def getMaze():
     maze = []
@@ -14,25 +15,19 @@ def getMaze():
         maze.append(line)
     return maze
 
+
 def checkBonus(maze):
     for line in maze:
         if "!" in line:
             return True
     return False
 
-def checkOpp(maze, now):
-    y,x = now
-    for x2,y2 in ((x+1, y), (x-1, y), (x, y+1), (x, y-1)):
-        if x2>=0 and y2<= 0 and x2<len(maze[0]) and y2 <len(maze):
-            if maze[y2][x2] in alp:
-                return True
-    return False
 
 # funtion read maze and return the position of A
 def getPositionOfChar(maze, char):
     for line in maze:
         if char in line:
-            return [line.index(char),maze.index(line)]
+            return [line.index(char), maze.index(line)]
     return None
 
 
@@ -64,9 +59,10 @@ def move(char, go):
         return "MOVE RIGHT\n"
     elif go[0] - char[0] == -1:
         return "MOVE LEFT\n"
+    else:
+        return None
 
 
-# run here
 def main():
     line = sys.stdin.readline()
     while line != "":
@@ -77,20 +73,18 @@ def main():
             print("OK\n")
         if "MAZE" in line:
             nowMaze = getMaze()
-            nowPosition = getPositionOfChar(nowMaze,char)
-            if checkOpp(nowMaze,nowPosition):
-                move1 = bfs(nowMaze, (nowPosition[0], nowPosition[1]),'o')
+            nowPosition = getPositionOfChar(nowMaze, char)
+            if checkBonus(nowMaze):
+                move1 = bfs(nowMaze, (nowPosition[0], nowPosition[1]), '!')
+                if move1 is None or len(move1) >= 20:
+                    move1 = bfs(nowMaze, (nowPosition[0], nowPosition[1]), 'o')
             else:
-                if checkBonus(nowMaze):
-                    move1 = bfs(nowMaze, (nowPosition[0], nowPosition[1]),'!')
-                    if move1 is None or len(move1)>=20:
-                        move1 = bfs(nowMaze, (nowPosition[0], nowPosition[1]),'o')
-                else:
-                    move1 = bfs(nowMaze, (nowPosition[0], nowPosition[1]),'o')
+                move1 = bfs(nowMaze, (nowPosition[0], nowPosition[1]), 'o')
             if move1 is None:
-                move1 = bfs(nowMaze, (nowPosition[0], nowPosition[1]),' ')
+                move1 = bfs(nowMaze, (nowPosition[0], nowPosition[1]), ' ')
             print(move(nowPosition, move1[0]))
         line = sys.stdin.readline()
+
 
 if __name__ == '__main__':
     main()
