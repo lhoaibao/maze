@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import sys
 import collections
-alp = 'ASDFGHJKLQWERTYUIOPZXCVBNM'
 
 
 # funtion read maze every time it change
@@ -43,7 +42,7 @@ def bfs(maze, start, res):
             return path
         for x2, y2 in ((x+1, y), (x-1, y), (x, y+1), (x, y-1)):
             if maze[y2][x2] != '#' and (x2, y2) not in seen:
-                if maze[y2][x2] not in alp:
+                if maze[y2][x2] not in 'ASDFGHJKLQWERTYUIOPZXCVBNM':
                     queue.append(path + [[x2, y2]])
                     seen.add((x2, y2))
     return None
