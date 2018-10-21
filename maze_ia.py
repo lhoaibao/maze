@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import sys
 import collections
-
+alp = 'ASDFGHJKLQWERTYUIOPZXCVBNM'
 
 # funtion read maze every time it change
 def getMaze():
@@ -14,59 +14,83 @@ def getMaze():
         maze.append(line)
     return maze
 
+def checkBonus(maze):
+    for line in maze:
+        if "!" in line:
+            return True
+    return False
+
+def checkOpp(maze, now):
+    y,x = now
+    for x2,y2 in ((x+1, y), (x-1, y), (x, y+1), (x, y-1)):
+        if x2>=0 and y2<= 0 and x2<len(maze[0]) and y2 <len(maze):
+            if maze[y2][x2] in alp:
+                return True
+    return False
 
 # funtion read maze and return the position of A
-def getPositionOfA(maze):
-    y = 0
+def getPositionOfChar(maze, char):
     for line in maze:
-        if "A" in line:
-            x = line.index("A")
-            return [x, y]
-        else:
-            y += 1
+        if char in line:
+            return [line.index(char),maze.index(line)]
+    return None
 
 
 # funtion get the shortest way and return a list move
-def bfs(grid, start):
+def bfs(maze, start, res):
     queue = collections.deque([[start]])
     seen = set([start])
     while queue:
         path = queue.popleft()
         x, y = path[-1]
-        if grid[y][x] == 'o':
+        if maze[y][x] == res:
             path.remove(path[0])
-            return path[0]
-        elif grid[y][x] == '!':
-            path.remove(path[0])
-            return path[0]
+            return path
         for x2, y2 in ((x+1, y), (x-1, y), (x, y+1), (x, y-1)):
-            if grid[y2][x2] != '#' and (x2, y2) not in seen:
-                queue.append(path + [[x2, y2]])
-                seen.add((x2, y2))
+            if maze[y2][x2] != '#' and (x2, y2) not in seen:
+                if maze[y2][x2] not in alp:
+                    queue.append(path + [[x2, y2]])
+                    seen.add((x2, y2))
+    return None
 
 
 # funtion return the command to move
-def move(A, go):
-    if go[1] - A[1] == 1:
+def move(char, go):
+    if go[1] - char[1] == 1:
         return "MOVE DOWN\n"
-    elif go[1] - A[1] == -1:
+    elif go[1] - char[1] == -1:
         return "MOVE UP\n"
-    elif go[0] - A[0] == 1:
+    elif go[0] - char[0] == 1:
         return "MOVE RIGHT\n"
-    elif go[0] - A[0] == -1:
+    elif go[0] - char[0] == -1:
         return "MOVE LEFT\n"
 
 
 # run here
-line = sys.stdin.readline()
-while line != "":
-    if "HELLO" in line:
-        print("I AM BAO\n")
-    if "YOU ARE A" in line:
-        print("OK\n")
-    if "MAZE" in line:
-        nowMaze = getMaze()
-        nowPosition = getPositionOfA(nowMaze)
-        move1 = bfs(nowMaze, (nowPosition[0], nowPosition[1]))
-        print(move(nowPosition, move1))
+def main():
     line = sys.stdin.readline()
+    while line != "":
+        if "HELLO" in line:
+            print("I AM BAO\n")
+        if "YOU ARE" in line:
+            char = line[-2]
+            print("OK\n")
+        if "MAZE" in line:
+            nowMaze = getMaze()
+            nowPosition = getPositionOfChar(nowMaze,char)
+            if checkOpp(nowMaze,nowPosition):
+                move1 = bfs(nowMaze, (nowPosition[0], nowPosition[1]),'o')
+            else:
+                if checkBonus(nowMaze):
+                    move1 = bfs(nowMaze, (nowPosition[0], nowPosition[1]),'!')
+                    if move1 is None or len(move1)>=20:
+                        move1 = bfs(nowMaze, (nowPosition[0], nowPosition[1]),'o')
+                else:
+                    move1 = bfs(nowMaze, (nowPosition[0], nowPosition[1]),'o')
+            if move1 is None:
+                move1 = bfs(nowMaze, (nowPosition[0], nowPosition[1]),' ')
+            print(move(nowPosition, move1[0]))
+        line = sys.stdin.readline()
+
+if __name__ == '__main__':
+    main()
